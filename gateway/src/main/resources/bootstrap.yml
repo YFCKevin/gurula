@@ -1,0 +1,33 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: gateway
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+        shared-configs:
+          - data-id: shared-log.yaml
+        namespace: 49f4b80e-6157-446c-958c-0fc320423c62
+      discovery:
+        server-addr: localhost:8848
+        namespace: 49f4b80e-6157-446c-958c-0fc320423c62
+jwt:
+  location: gurula.jks
+  alias: gurula
+  password: gurula
+  tokenTTL: 30m
+auth:
+  excludePaths:
+    - /gurula/index.html
+    - /gurula/login.html
+    - /gurula/oauth2/**
+    - /gurula/login/**
+    - /gurula/images/**
+    - /gurula/js/**
+    - /gurula/callback
+    - /badmintonfront/**
