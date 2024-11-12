@@ -25,6 +25,10 @@ public class LineApplication {
 		SpringApplication.run(LineApplication.class, args);
 	}
 	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+	@Bean
 	public ObjectMapper objectMapper(){
 		return new ObjectMapper();
 	}

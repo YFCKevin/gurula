@@ -9,14 +9,14 @@
 	<name>Archetype - gurula</name>
 	<url>http://maven.apache.org</url>
 	<modules>
+		<module>common</module>
+		<module>api</module>
+		<module>gateway</module>
+		<module>member-service</module>
 		<module>badminton</module>
 		<module>badminton-front</module>
-		<module>common</module>
         <module>line-service</module>
 		<module>line-front</module>
-        <module>api</module>
-        <module>gateway</module>
-		<module>member-service</module>
 	</modules>
 
 	<parent>
