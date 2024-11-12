@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: memberservice
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+        shared-configs:
+          - data-id: shared-log.yaml
+        namespace: 49f4b80e-6157-446c-958c-0fc320423c62
+      discovery:
+        server-addr: localhost:8848
+        namespace: 49f4b80e-6157-446c-958c-0fc320423c62
+  resources:
+    static-locations: file:/Users/chenyifan/Documents/workspace-fan/gurula/member-service/src/main/resources/static/
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    cache: true
+    prefix: file:/Users/chenyifan/Documents/workspace-fan/gurula/member-service/src/main/resources/templates/
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: http://localhost:8080/gurula/login/oauth2/code/google
+            client-id: ${google.client-id}
+            client-secret: ${google.client-secret}
+            scope:
+              - email
+              - profile
+          line:
+            client-id: ${line.client-id}
+            client-secret: ${line.client-secret}
+            redirect-uri: http://localhost:8080/gurula/callback
+            scope:
+              - openid
+              - profile
+            authorization-grant-type: authorization_code
+        provider:
+          line:
+            authorization-uri: https://access.line.me/oauth2/v2.1/authorize
+            token-uri: https://api.line.me/oauth2/v2.1/token
+            user-info-uri: https://api.line.me/v2/profile
+            user-name-attribute: userId
+forest:
+  max-connections: 1000
+  connect-timeout: 3000
+  read-timeout: 3000
+  log-response-content: true
+  client:
+    type: okhttp
+jwt:
+  location: gurula.jks
+  alias: gurula
+  password: gurula
+  tokenTTL: 30m

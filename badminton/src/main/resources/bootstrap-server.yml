@@ -1,23 +1,19 @@
 spring:
   application:
-    name: lineservice
-  profiles:
-    active: dev
+    name: badmintonservice
   cloud:
     nacos:
       config:
-        server-addr: localhost:8848
+        server-addr: 104.155.209.147:8848
         file-extension: yaml
         shared-configs:
           - data-id: shared-log.yaml
-        namespace: 49f4b80e-6157-446c-958c-0fc320423c62
+        namespace: 84a8d1af-4af2-4a1c-9df4-b0b7c2ef3998
       discovery:
-        server-addr: localhost:8848
-        namespace: 49f4b80e-6157-446c-958c-0fc320423c62
+        server-addr: 104.155.209.147:8848
+        namespace: 84a8d1af-4af2-4a1c-9df4-b0b7c2ef3998
 forest:
   max-connections: 1000
   connect-timeout: 3000
   read-timeout: 3000
   log-response-content: true
-  client:
-    type: okhttp

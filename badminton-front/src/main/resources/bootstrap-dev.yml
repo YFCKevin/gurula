@@ -1,8 +1,6 @@
 spring:
   application:
-    name: linefrontservice
-  profiles:
-    active: dev
+    name: badmintonfrontservice
   cloud:
     nacos:
       config:
@@ -15,12 +13,12 @@ spring:
         server-addr: localhost:8848
         namespace: 49f4b80e-6157-446c-958c-0fc320423c62
   resources:
-    static-locations: file:/Users/chenyifan/Documents/workspace-fan/gurula/line-front/src/main/resources/static/
+    static-locations: file:/Users/chenyifan/Documents/workspace-fan/gurula/badminton-front/src/main/resources/static/
   thymeleaf:
     mode: HTML
     encoding: UTF-8
     cache: true
-    prefix: file:/Users/chenyifan/Documents/workspace-fan/gurula/line-front/src/main/resources/templates/
+    prefix: file:/Users/chenyifan/Documents/workspace-fan/gurula/badminton-front/src/main/resources/templates/
 forest:
   max-connections: 1000
   connect-timeout: 3000
