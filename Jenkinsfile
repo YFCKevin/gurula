@@ -2,10 +2,11 @@ pipeline {
     agent any
     environment {
         GOOGLE_CREDENTIALS = credentials('gcp-credentials')
-        GKE_CLUSTER = 'gurula'  // GKE 集群名稱
-        GKE_ZONE = 'asia-east1-b'  // GKE 集群區域
-        GKE_PROJECT = 'gurula'  // GCP 專案 ID
-        ARTIFACT_REGISTRY = 'gcr.io'  // Artifact Registry 存儲庫地址
+        GKE_CLUSTER = 'gurula'
+        GKE_ZONE = 'asia-east1-b'
+        GKE_PROJECT = 'gurula'
+        ARTIFACT_REGISTRY = 'gcr.io'
+        BUILD_ID = 'latest'
     }
     stages {
         stage('Checkout') {
@@ -17,7 +18,6 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    // build docker image
                     def services = [
                         [name: 'gateway', jar: 'gateway/target/gateway.jar'],
                         [name: 'member-service', jar: 'member-service/target/member-service.jar'],
@@ -36,9 +36,10 @@ pipeline {
         stage('Push to Artifact Registry') {
             steps {
                 script {
-                    // Push Docker Images to Artifact Registry
                     withCredentials([file(credentialsId: 'gcp-credentials', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                        echo "Activating service account"
                         sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+                        echo "Configuring Docker auth for Artifact Registry"
                         sh 'gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
 
                         def services = [
@@ -60,10 +61,10 @@ pipeline {
         stage('Deploy to GKE') {
             steps {
                 script {
-                    // 部署每個服務到 GKE
                     withCredentials([file(credentialsId: 'gcp-credentials', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                        // 設置 GKE 認證
+                        echo "Activating service account"
                         sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+                        echo "Getting credentials for GKE cluster"
                         sh 'gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GKE_PROJECT}'
 
                         def services = [
@@ -76,6 +77,7 @@ pipeline {
                         services.each { service ->
                             echo "Deploying ${service.name} to GKE"
                             sh """
+                                set -e
                                 kubectl set image deployment/${service.name}-deployment ${service.name}-container=${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID} --record
                                 kubectl rollout status deployment/${service.name}-deployment
                             """
