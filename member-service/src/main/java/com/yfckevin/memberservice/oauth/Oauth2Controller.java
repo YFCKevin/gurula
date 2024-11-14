@@ -94,7 +94,6 @@ public class Oauth2Controller {
 
         // 設定 Cookie
         ResponseCookie cookie = ResponseCookie.from("JWT_TOKEN", token)
-//                .httpOnly(true)
                 .secure(true)
                 .path("/")
                 .maxAge(20 * 60)
