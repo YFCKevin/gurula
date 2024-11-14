@@ -41,11 +41,10 @@ pipeline {
         stage('Push to Artifact Registry') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'gcp-credentials', variable: 'GCP_API_KEY'),
-                                     string(credentialsId: 'gcp-email', variable: 'GCP_EMAIL')]) {
+                    withCredentials([file(credentialsId: 'gcp-credentials', variable: 'GCP_CREDENTIALS_JSON')]) {
                         echo "Activating service account"
                         sh """
-                            echo '${GCP_API_KEY}' | gcloud auth activate-service-account ${GCP_EMAIL} --key-file=-
+                            gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS_JSON}
                         """
 
                         echo "Configuring Docker auth for Artifact Registry"
@@ -70,11 +69,10 @@ pipeline {
         stage('Deploy to GKE') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'gcp-credentials', variable: 'GCP_API_KEY'),
-                                     string(credentialsId: 'gcp-email', variable: 'GCP_EMAIL')]) {
+                    withCredentials([file(credentialsId: 'gcp-credentials', variable: 'GCP_CREDENTIALS_JSON')]) {
                         echo "Activating service account"
                         sh """
-                            echo '${GCP_API_KEY}' | gcloud auth activate-service-account ${GCP_EMAIL} --key-file=-
+                            gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS_JSON}
                         """
 
                         echo "Getting credentials for GKE cluster"
