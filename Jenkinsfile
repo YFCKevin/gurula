@@ -41,29 +41,19 @@ pipeline {
         stage('Push to Artifact Registry') {
             steps {
                 script {
-                    withCredentials([file(credentialsId: 'gcp-credentials', variable: 'GCP_CREDENTIALS_JSON')]) {
-                        echo "Activating service account"
-                        def credentialsFilePath = '/var/lib/jenkins/workspace/gurula platform@tmp/secretFiles/gcp-credentials.json'
-                        sh """
-                            ls ${credentialsFilePath}
+                    echo "Configuring Docker auth for Artifact Registry"
+                    sh 'gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
 
-                            gcloud auth activate-service-account --key-file=${credentialsFilePath}
-                        """
+                    def services = [
+                        [name: 'gateway'],
+                        [name: 'member-service'],
+                        [name: 'badminton'],
+                        [name: 'badminton-front']
+                    ]
 
-                        echo "Configuring Docker auth for Artifact Registry"
-                        sh 'gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
-
-                        def services = [
-                            [name: 'gateway'],
-                            [name: 'member-service'],
-                            [name: 'badminton'],
-                            [name: 'badminton-front']
-                        ]
-
-                        services.each { service ->
-                            echo "Pushing Docker image for ${service.name}"
-                            sh "docker push ${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID}"
-                        }
+                    services.each { service ->
+                        echo "Pushing Docker image for ${service.name}"
+                        sh "docker push ${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID}"
                     }
                 }
             }
@@ -72,30 +62,23 @@ pipeline {
         stage('Deploy to GKE') {
             steps {
                 script {
-                    withCredentials([file(credentialsId: 'gcp-credentials', variable: 'GCP_CREDENTIALS_JSON')]) {
-                        echo "Activating service account"
+                    echo "Getting credentials for GKE cluster"
+                    sh 'gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GKE_PROJECT}'
+
+                    def services = [
+                        [name: 'gateway'],
+                        [name: 'member-service'],
+                        [name: 'badminton'],
+                        [name: 'badminton-front']
+                    ]
+
+                    services.each { service ->
+                        echo "Deploying ${service.name} to GKE"
                         sh """
-                            gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS_JSON}
+                            set -e
+                            kubectl set image deployment/${service.name}-deployment ${service.name}-container=${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID} --record
+                            kubectl rollout status deployment/${service.name}-deployment
                         """
-
-                        echo "Getting credentials for GKE cluster"
-                        sh 'gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GKE_PROJECT}'
-
-                        def services = [
-                            [name: 'gateway'],
-                            [name: 'member-service'],
-                            [name: 'badminton'],
-                            [name: 'badminton-front']
-                        ]
-
-                        services.each { service ->
-                            echo "Deploying ${service.name} to GKE"
-                            sh """
-                                set -e
-                                kubectl set image deployment/${service.name}-deployment ${service.name}-container=${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID} --record
-                                kubectl rollout status deployment/${service.name}-deployment
-                            """
-                        }
                     }
                 }
             }
