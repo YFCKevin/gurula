@@ -5,7 +5,7 @@ ENV TZ=Asia/Taipei
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # copy jar
-COPY target/member-service.jar /app.jar
+COPY member-service/target/member-service.jar /app.jar
 
 # entrypoint
 ENTRYPOINT ["java", "-jar", "/app.jar"]
