@@ -14,6 +14,12 @@ pipeline {
             }
         }
 
+        stage('Build') {
+            steps {
+                sh "mvn -Dmaven.test.failure.ignore=true -DskipTests clean package"
+            }
+        }
+
         stage('Build Docker Images') {
             steps {
                 script {
