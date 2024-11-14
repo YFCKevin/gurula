@@ -70,7 +70,7 @@ pipeline {
         stage('Deploy to GKE') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'gcp-credentials-json', variable: 'GCP_API_KEY'),
+                    withCredentials([string(credentialsId: 'gcp-credentials', variable: 'GCP_API_KEY'),
                                      string(credentialsId: 'gcp-email', variable: 'GCP_EMAIL')]) {
                         echo "Activating service account"
                         sh """
