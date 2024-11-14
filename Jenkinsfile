@@ -46,7 +46,7 @@ pipeline {
                     sh 'gcloud auth list'
 
                     echo "Configuring Docker auth for Artifact Registry"
-                    sh 'gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
+                    sh 'sudo gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
 
                     def services = [
                         [name: 'gateway'],
@@ -57,7 +57,7 @@ pipeline {
 
                     services.each { service ->
                         echo "Pushing Docker image for ${service.name}"
-                        sh "docker push ${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID}"
+                        sh "sudo docker push ${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID}"
                     }
                 }
             }
@@ -67,7 +67,7 @@ pipeline {
             steps {
                 script {
                     echo "Getting credentials for GKE cluster"
-                    sh 'gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GKE_PROJECT}'
+                    sh 'sudo gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GKE_PROJECT}'
 
                     def services = [
                         [name: 'gateway'],
@@ -80,8 +80,8 @@ pipeline {
                         echo "Deploying ${service.name} to GKE"
                         sh """
                             set -e
-                            kubectl set image deployment/${service.name}-deployment ${service.name}-container=${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID} --record
-                            kubectl rollout status deployment/${service.name}-deployment
+                            sudo kubectl set image deployment/${service.name}-deployment ${service.name}-container=${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID} --record
+                            sudo kubectl rollout status deployment/${service.name}-deployment
                         """
                     }
                 }
