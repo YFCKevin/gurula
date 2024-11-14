@@ -41,12 +41,13 @@ pipeline {
         stage('Push to Artifact Registry') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'gcp-credentials-file', usernameVariable: 'GCP_EMAIL', passwordVariable: 'GCP_API_KEY')]) {
+                    withCredentials([string(credentialsId: 'gcp-credentials', variable: 'GCP_API_KEY'),
+                                     string(credentialsId: 'gcp-email', variable: 'GCP_EMAIL')]) {
                         echo "Activating service account"
                         sh """
-                            echo ${GCP_API_KEY} > gcp-credentials.json
-                            gcloud auth activate-service-account ${GCP_EMAIL} --key-file=gcp-credentials.json
+                            echo '${GCP_API_KEY}' | gcloud auth activate-service-account ${GCP_EMAIL} --key-file=-
                         """
+
                         echo "Configuring Docker auth for Artifact Registry"
                         sh 'gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
 
@@ -69,12 +70,13 @@ pipeline {
         stage('Deploy to GKE') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'gcp-credentials-file', usernameVariable: 'GCP_EMAIL', passwordVariable: 'GCP_API_KEY')]) {
+                    withCredentials([string(credentialsId: 'gcp-credentials-json', variable: 'GCP_API_KEY'),
+                                     string(credentialsId: 'gcp-email', variable: 'GCP_EMAIL')]) {
                         echo "Activating service account"
                         sh """
-                            echo ${GCP_API_KEY} > gcp-credentials.json
-                            gcloud auth activate-service-account ${GCP_EMAIL} --key-file=gcp-credentials.json
+                            echo '${GCP_API_KEY}' | gcloud auth activate-service-account ${GCP_EMAIL} --key-file=-
                         """
+
                         echo "Getting credentials for GKE cluster"
                         sh 'gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GKE_PROJECT}'
 
