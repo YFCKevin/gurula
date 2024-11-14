@@ -43,8 +43,11 @@ pipeline {
                 script {
                     withCredentials([file(credentialsId: 'gcp-credentials', variable: 'GCP_CREDENTIALS_JSON')]) {
                         echo "Activating service account"
+                        def credentialsFilePath = '/var/lib/jenkins/workspace/gurula platform@tmp/secretFiles/gcp-credentials.json'
                         sh """
-                            gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS_JSON}
+                            ls ${credentialsFilePath}
+
+                            gcloud auth activate-service-account --key-file=${credentialsFilePath}
                         """
 
                         echo "Configuring Docker auth for Artifact Registry"
