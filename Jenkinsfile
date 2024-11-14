@@ -26,7 +26,7 @@ pipeline {
 
                     services.each { service ->
                         echo "Building Docker image for ${service.name}"
-                        sh "docker build -t ${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID} -f Dockerfile.${service.name} ."
+                        sh "docker build -t ${ARTIFACT_REGISTRY}/${service.name}:${BUILD_ID} -f ${service.name}/Dockerfile ."
                     }
                 }
             }
