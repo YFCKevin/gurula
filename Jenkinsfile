@@ -46,7 +46,7 @@ pipeline {
                     sh 'gcloud auth list'
 
                     echo "Configuring Docker auth for Artifact Registry"
-                    sh 'sudo gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
+                    sh 'gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
 
                     def services = [
                         [name: 'gateway'],
