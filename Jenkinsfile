@@ -38,7 +38,7 @@ pipeline {
                 script {
                     withCredentials([file(credentialsId: 'gcp-credentials', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                         echo "Activating service account"
-                        sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+                        sh 'gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}'
                         echo "Configuring Docker auth for Artifact Registry"
                         sh 'gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
 
@@ -63,7 +63,7 @@ pipeline {
                 script {
                     withCredentials([file(credentialsId: 'gcp-credentials', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                         echo "Activating service account"
-                        sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+                        sh 'gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}'
                         echo "Getting credentials for GKE cluster"
                         sh 'gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GKE_PROJECT}'
 
