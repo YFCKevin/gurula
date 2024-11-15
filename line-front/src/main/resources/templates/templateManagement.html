@@ -15,9 +15,9 @@
 <div class="header">
     <div class="header-title">模板管理</div>
     <div class="header-links">
-        <a th:href="@{forwardLeaderManagement}">團主管理</a>
-        <a th:href="@{forwardPostManagement}">貼文管理</a>
-        <a th:href="@{forwardFileManagement}">檔案管理</a>
+        <a th:href="|${badmintonFrontDomain}forwardLeaderManagement|">團主管理</a>
+        <a th:href="|${badmintonFrontDomain}forwardPostManagement|">貼文管理</a>
+        <a th:href="|${badmintonFrontDomain}forwardFileManagement|">檔案管理</a>
         <a th:href="@{backendLogout}">登出</a>
     </div>
 </div>

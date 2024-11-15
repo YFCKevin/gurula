@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 
+@EnableDiscoveryClient
 @EnableScheduling
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.yfckevin.api.badminton", "com.yfckevin.lineservice"})

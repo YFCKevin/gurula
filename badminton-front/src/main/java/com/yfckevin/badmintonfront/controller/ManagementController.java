@@ -81,7 +81,7 @@ public class ManagementController {
         if (member != null) {
             logger.info("[forwardLeaderManagement]");
         } else {
-            return "redirect:/backendLogin";
+            return "redirect:" + configProperties.getBackendLoginDomain() + "backendLogin";
         }
         final ForestResponse<ResultStatus<List<LeaderResponseDTO>>> allLeader = leaderApi.findAllLeader();
         if ("C000".equals(allLeader.getResult().getCode())) {
@@ -217,7 +217,7 @@ public class ManagementController {
         if (member != null) {
             logger.info("[forwardPostManagement]");
         } else {
-            return "redirect:/backendLogin";
+            return "redirect:" + configProperties.getBackendLoginDomain() + "backendLogin";
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -645,7 +645,7 @@ public class ManagementController {
         if (member != null) {
             logger.info("[forwardFileManagement]");
         } else {
-            return "redirect:/backendLogin";
+            return "redirect:" + configProperties.getBackendLoginDomain() + "backendLogin";
         }
 
         final List<RequestPostDTO> postDTOList = constructPostDTOFromDailyPostsFile(svf.format(new Date()));
@@ -1115,6 +1115,12 @@ public class ManagementController {
         resultStatus.setMessage(oneCourtInfo.getResult().getMessage());
         resultStatus.setData(constructCourtDTO(oneCourtInfo.getResult().getData()));
         return ResponseEntity.ok(resultStatus);
+    }
+
+
+    @ModelAttribute
+    public void setGlobalDomain(Model model) {
+        model.addAttribute("lineDomain", configProperties.getLineDomain());
     }
 
 

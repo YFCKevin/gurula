@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: linefrontservice
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+        shared-configs:
+          - data-id: shared-log.yaml
+        namespace: 49f4b80e-6157-446c-958c-0fc320423c62
+      discovery:
+        server-addr: localhost:8848
+        namespace: 49f4b80e-6157-446c-958c-0fc320423c62
+  resources:
+    static-locations: classpath:/static/
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    cache: true
+    prefix: classpath:/templates/
+forest:
+  max-connections: 1000
+  connect-timeout: 3000
+  read-timeout: 3000
+  log-response-content: true
+  client:
+    type: okhttp

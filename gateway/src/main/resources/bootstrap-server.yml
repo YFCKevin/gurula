@@ -29,3 +29,5 @@ auth:
     - /gurula/js/**
     - /gurula/callback
     - /badmintonfront/**
+    - /linefront/**
+    - /line/**

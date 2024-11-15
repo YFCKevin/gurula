@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -105,8 +106,7 @@ public class TemplateController {
     public ResponseEntity<?> saveTemplateSubject (@RequestBody TemplateSubjectRequestDTO requestDTO){
         logger.info("[saveTemplateSubject]");
         ResultStatus resultStatus = new ResultStatus();
-        final Optional<TemplateSubject> opt = templateSubjectService.findById(requestDTO.getId());
-        if (opt.isEmpty()) {    //新增
+        if (StringUtils.isBlank(requestDTO.getId())) {    //新增
             TemplateSubject templateSubject = new TemplateSubject();
             templateSubject.setTemplateType(requestDTO.getTemplateType());
             templateSubject.setUserIds(requestDTO.getUserIds());
@@ -117,6 +117,7 @@ public class TemplateController {
             templateSubject.setCreationDate(sdf.format(new Date()));
             templateSubjectService.save(templateSubject);
         } else {    //更新
+            final Optional<TemplateSubject> opt = templateSubjectService.findById(requestDTO.getId());
             final TemplateSubject templateSubject = opt.get();
             templateSubject.setTemplateType(requestDTO.getTemplateType());
             templateSubject.setUserIds(requestDTO.getUserIds());
@@ -185,8 +186,11 @@ public class TemplateController {
 
 
     @PostMapping("/addTemplateDetail")
-    public String addTemplateDetail (@ModelAttribute TemplateDetailDTO dto) throws IOException {
+    public ResponseEntity<?> addTemplateDetail (@ModelAttribute TemplateDetailDTO dto) throws IOException {
         logger.info("[addTemplateDetail]");
+
+        ResultStatus resultStatus = new ResultStatus();
+
         if (StringUtils.isBlank(dto.getId())) { //新增
             Path uploadPath = Path.of(configProperties.getPicSavePath());
             if (!Files.exists(uploadPath)) {
@@ -208,7 +212,9 @@ public class TemplateController {
                 } catch (IOException e) {
                     System.out.println("圖片上傳失敗");
                     logger.error(e.getMessage(), e);
-                    return "/error/50x";
+                    resultStatus.setCode("C013");
+                    resultStatus.setMessage("圖片上傳失敗");
+                    return ResponseEntity.ok(resultStatus);
                 }
                 templateDetail.setCover(configProperties.getPicShowPath() + fileName);
             }
@@ -232,7 +238,10 @@ public class TemplateController {
             }
         }
 
-        return "forwardTemplateManagement";
+        resultStatus.setCode("C000");
+        resultStatus.setMessage("成功");
+
+        return ResponseEntity.ok(resultStatus);
     }
 
 
@@ -273,6 +282,34 @@ public class TemplateController {
         } else {
             resultStatus.setCode("C999");
             resultStatus.setMessage("例外發生");
+        }
+        return ResponseEntity.ok(resultStatus);
+    }
+
+
+    /**
+     * 用id查找模板的userIdList
+     * @param id
+     * @param session
+     * @return
+     */
+    @GetMapping("/findTemplateSubjectById/{id}")
+    public ResponseEntity<?> findTemplateSubjectById (@PathVariable String id, HttpSession session){
+        final String member = (String) session.getAttribute("admin");
+        if (member != null) {
+            logger.info("[findTemplateSubjectById]");
+        }
+        ResultStatus resultStatus = new ResultStatus();
+
+        final Optional<TemplateSubject> subjectOpt = templateSubjectService.findById(id);
+        if (subjectOpt.isEmpty()) {
+            resultStatus.setCode("C010");
+            resultStatus.setMessage("查無模板");
+        } else {
+            final TemplateSubject templateSubject = subjectOpt.get();
+            resultStatus.setCode("C000");
+            resultStatus.setMessage("成功");
+            resultStatus.setData(templateSubject.getUserIds()); //傳送userIds
         }
         return ResponseEntity.ok(resultStatus);
     }

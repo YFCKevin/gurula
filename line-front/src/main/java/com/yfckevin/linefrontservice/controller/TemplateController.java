@@ -3,36 +3,35 @@ package com.yfckevin.linefrontservice.controller;
 import com.dtflys.forest.http.ForestResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yfckevin.common.exception.ResultStatus;
+import com.yfckevin.linefrontservice.ConfigProperties;
 import com.yfckevin.linefrontservice.dto.*;
-import com.yfckevin.lineservice.api.LineApi;
 import com.yfckevin.linefrontservice.api.TemplateApi;
-import com.yfckevin.lineservice.enums.TemplateType;
-import org.apache.commons.io.FilenameUtils;
+import com.yfckevin.linefrontservice.enums.TemplateType;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@RestController
+@Controller
 public class TemplateController {
     Logger logger = LoggerFactory.getLogger(TemplateController.class);
+    private final ConfigProperties configProperties;
     private final TemplateApi templateApi;
     private final SimpleDateFormat sdf;
 
-    public TemplateController(TemplateApi templateApi, @Qualifier("sdf") SimpleDateFormat sdf) {
+    public TemplateController(ConfigProperties configProperties, TemplateApi templateApi, @Qualifier("sdf") SimpleDateFormat sdf) {
+        this.configProperties = configProperties;
         this.templateApi = templateApi;
         this.sdf = sdf;
     }
@@ -49,9 +48,10 @@ public class TemplateController {
         final String member = (String) session.getAttribute("admin");
         if (member != null) {
             logger.info("[forwardTemplateManagement]");
-        } else {
-            return "redirect:/backendLogin";
         }
+//        else {
+//            return "redirect:" + configProperties.getBackendLoginDomain() + "backendLogin";
+//        }
         List<TemplateDTO> templateDTOList = new ArrayList<>();
         final ForestResponse<ResultStatus<List<TemplateSubjectResponseDTO>>> templateSubjectList = templateApi.getAllTemplate();
         templateDTOList = templateSubjectList.getResult().getData().stream()
@@ -60,7 +60,7 @@ public class TemplateController {
 
         model.addAttribute("templateDTOList", templateDTOList);
 
-        return "backend/templateManagement";
+        return "templateManagement";
     }
 
 
@@ -208,7 +208,7 @@ public class TemplateController {
             logger.info("[addTemplateDetail]");
         }
 
-        String redirectUrl = templateApi.addTemplateDetail(
+        final ForestResponse<ResultStatus<?>> response = templateApi.addTemplateDetail(
                 dto.getMultipartFile(),
                 dto.getId(),
                 dto.getSubjectId(),
@@ -221,7 +221,42 @@ public class TemplateController {
                 dto.getButtonUrl()
         );
 
-        return "redirect:" + redirectUrl;
+        final String responseCode = response.getResult().getCode();
+        if ("C000".equals(responseCode)) {
+            return "redirect:" + configProperties.getGlobalDomain() + "forwardTemplateManagement";
+        } else {
+            return "redirect:/error/50x";
+        }
+    }
+
+
+    /**
+     * 用id查找模板的userIdList
+     * @param id
+     * @param session
+     * @return
+     */
+    @GetMapping("/findTemplateSubjectById/{id}")
+    public ResponseEntity<?> findTemplateSubjectById (@PathVariable String id, HttpSession session){
+        final String member = (String) session.getAttribute("admin");
+        if (member != null) {
+            logger.info("[findTemplateSubjectById]");
+        }
+        ResultStatus resultStatus = new ResultStatus();
+
+        final ForestResponse<ResultStatus<List<String>>> response = templateApi.getSelectedUserId(id);
+        final String responseCode = response.getResult().getCode();
+        final String message = response.getResult().getMessage();
+        final List<String> selectedUserId = response.getResult().getData();
+        if ("C000".equals(responseCode)) {
+            resultStatus.setCode(responseCode);
+            resultStatus.setMessage(message);
+            resultStatus.setData(selectedUserId);
+        } else {
+            resultStatus.setCode(responseCode);
+            resultStatus.setMessage(message);
+        }
+        return ResponseEntity.ok(resultStatus);
     }
 
 
@@ -281,6 +316,12 @@ public class TemplateController {
         }
 
         return ResponseEntity.ok(resultStatus);
+    }
+
+
+    @ModelAttribute
+    public void setGlobalDomain(Model model) {
+        model.addAttribute("badmintonFrontDomain", configProperties.getBadmintonFrontDomain());
     }
 
     @NotNull

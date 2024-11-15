@@ -20,7 +20,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Override
     protected String getDatabaseName() {
-        return "flex_template";
+        return "flexTemplate";
     }
 
     @Override
@@ -33,7 +33,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Bean
     public MongoTemplate mongoTemplate() throws Exception {
-        return new MongoTemplate(mongoClient(), "flex_template");
+        return new MongoTemplate(mongoClient(), "flexTemplate");
     }
 
 }

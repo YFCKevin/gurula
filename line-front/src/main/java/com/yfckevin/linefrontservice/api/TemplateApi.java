@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@BaseRequest(baseURL = "{backendDomain}")
+@BaseRequest(baseURL = "${backendDomain}")
 public interface TemplateApi {
     @Get(url = "/getAllTemplate")
     ForestResponse<ResultStatus<List<TemplateSubjectResponseDTO>>> getAllTemplate();
@@ -29,14 +29,14 @@ public interface TemplateApi {
     ForestResponse<ResultStatus<TemplateSubjectResponseDTO>> oneTemplateSubjectInfo(@Var("subjectId") String subjectId);
 
     @Post(url = "/searchFollower", contentType = "application/json")
-    ForestResponse<ResultStatus<List<FollowerResponseDTO>>> searchFollower(SearchDTO searchDTO);
+    ForestResponse<ResultStatus<List<FollowerResponseDTO>>> searchFollower(@Body SearchDTO searchDTO);
 
     @Post(url = "/templateSearch", contentType = "application/json")
-    ForestResponse<ResultStatus<List<TemplateSubjectResponseDTO>>> templateSearch(SearchDTO searchDTO);
+    ForestResponse<ResultStatus<List<TemplateSubjectResponseDTO>>> templateSearch(@Body SearchDTO searchDTO);
 
     @Redirection
     @Post(url = "/addTemplateDetail")
-    String addTemplateDetail(
+    ForestResponse<ResultStatus<?>> addTemplateDetail(
             @DataFile("multipartFile") MultipartFile file,
             @Body("id") String id,
             @Body("subjectId") String subjectId,
@@ -54,4 +54,7 @@ public interface TemplateApi {
 
     @Post(url = "/prepareToPushMulti", contentType = "application/json")
     ForestResponse<ResultStatus<TemplateSubjectResponseDTO>> prepareToPushMulti(@Body LineMultiRequestDTO lineMultiRequestDTO);
+
+    @Get(url = "/findTemplateSubjectById/{templateSubjectId}")
+    ForestResponse<ResultStatus<List<String>>> getSelectedUserId(@Var("templateSubjectId") String templateSubjectId);
 }
