@@ -41,12 +41,14 @@ pipeline {
         stage('Push to Artifact Registry') {
             steps {
                 script {
-                    echo "Checking Google service account email"
-                    // 顯示當前使用的 Google 服務帳戶電子郵件
-                    sh 'gcloud auth list'
+                    withCredentials([file(credentialsId: 'gcp-credentials', variable: 'GCP_CREDENTIALS_JSON')]) {
+                        echo "Activating service account"
+                        sh """
+                            gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS_JSON}
+                        """
 
-                    echo "Configuring Docker auth for Artifact Registry"
-                    sh 'gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
+                        echo "Configuring Docker auth for Artifact Registry"
+                        sh 'gcloud auth configure-docker ${ARTIFACT_REGISTRY}'
 
                     def services = [
                         [name: 'gateway'],
