@@ -1,13 +1,11 @@
-package com.yfckevin.api.badminton.dto;
+package com.yfckevin.api.badminton.dto.badminton;
 
-
-import com.yfckevin.common.enums.AirConditionerType;
-
-public class PostResponseDTO {
+public class PostRequestDTO {
     private String id;
     private String userId;
     private String name;
     private String place;
+    private String time;
     private String startTime;
     private String endTime;
     private String level;
@@ -17,19 +15,21 @@ public class PostResponseDTO {
     private String contact;
     private String parkInfo;
     private String type;
-    private AirConditionerType airConditioner;
-    private String dayOfWeek;
+    private String airConditioner;
+    private String link;    //桌機版
+    private String shortLink;   //手機版
     private String creationDate;
     private String modificationDate;
     private String deletionDate;
-    private boolean labelCourt; //是否已加入球館內，預設是無
+    private String dayOfWeek;
+    private String labelCourt;
 
-    public String getDayOfWeek() {
-        return dayOfWeek;
+    public String getLabelCourt() {
+        return labelCourt;
     }
 
-    public void setDayOfWeek(String dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
+    public void setLabelCourt(String labelCourt) {
+        this.labelCourt = labelCourt;
     }
 
     public String getId() {
@@ -38,6 +38,14 @@ public class PostResponseDTO {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -128,11 +136,11 @@ public class PostResponseDTO {
         this.type = type;
     }
 
-    public AirConditionerType getAirConditioner() {
+    public String getAirConditioner() {
         return airConditioner;
     }
 
-    public void setAirConditioner(AirConditionerType airConditioner) {
+    public void setAirConditioner(String airConditioner) {
         this.airConditioner = airConditioner;
     }
 
@@ -144,12 +152,20 @@ public class PostResponseDTO {
         this.creationDate = creationDate;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getLink() {
+        return link;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getModificationDate() {
@@ -168,36 +184,20 @@ public class PostResponseDTO {
         this.deletionDate = deletionDate;
     }
 
-    public boolean isLabelCourt() {
-        return labelCourt;
+    public String getDayOfWeek() {
+        return dayOfWeek;
     }
 
-    public void setLabelCourt(boolean labelCourt) {
-        this.labelCourt = labelCourt;
+    public void setDayOfWeek(String dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
-    @Override
-    public String toString() {
-        return "PostResponseDTO{" +
-                "id='" + id + '\'' +
-                ", userId='" + userId + '\'' +
-                ", name='" + name + '\'' +
-                ", place='" + place + '\'' +
-                ", startTime='" + startTime + '\'' +
-                ", endTime='" + endTime + '\'' +
-                ", level='" + level + '\'' +
-                ", fee=" + fee +
-                ", duration=" + duration +
-                ", brand='" + brand + '\'' +
-                ", contact='" + contact + '\'' +
-                ", parkInfo='" + parkInfo + '\'' +
-                ", type='" + type + '\'' +
-                ", airConditioner=" + airConditioner +
-                ", dayOfWeek='" + dayOfWeek + '\'' +
-                ", creationDate='" + creationDate + '\'' +
-                ", modificationDate='" + modificationDate + '\'' +
-                ", deletionDate='" + deletionDate + '\'' +
-                ", labelCourt=" + labelCourt +
-                '}';
+    public String getShortLink() {
+        return shortLink;
+    }
+
+    public void setShortLink(String shortLink) {
+        this.shortLink = shortLink;
     }
 }
+

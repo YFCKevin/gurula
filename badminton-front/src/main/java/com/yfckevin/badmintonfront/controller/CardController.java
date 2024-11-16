@@ -1,14 +1,14 @@
 package com.yfckevin.badmintonfront.controller;
 
 import com.dtflys.forest.http.ForestResponse;
-import com.yfckevin.api.badminton.api.CourtApi;
-import com.yfckevin.api.badminton.dto.PostResponseDTO;
+import com.yfckevin.api.badminton.api.badminton.CourtApi;
+import com.yfckevin.api.badminton.dto.badminton.PostResponseDTO;
 import com.yfckevin.badmintonfront.dto.LeaderDTO;
 import com.yfckevin.badmintonfront.dto.PostDTO;
-import com.yfckevin.api.badminton.api.LeaderApi;
-import com.yfckevin.api.badminton.api.PostApi;
-import com.yfckevin.api.badminton.dto.CourtResponseDTO;
-import com.yfckevin.api.badminton.dto.LeaderResponseDTO;
+import com.yfckevin.api.badminton.api.badminton.LeaderApi;
+import com.yfckevin.api.badminton.api.badminton.PostApi;
+import com.yfckevin.api.badminton.dto.badminton.CourtResponseDTO;
+import com.yfckevin.api.badminton.dto.badminton.LeaderResponseDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;

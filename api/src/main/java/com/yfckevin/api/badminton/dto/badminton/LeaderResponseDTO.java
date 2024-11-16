@@ -1,12 +1,11 @@
-package com.yfckevin.api.badminton.dto;
+package com.yfckevin.api.badminton.dto.badminton;
 
-public class LeaderRequestDTO {
+public class LeaderResponseDTO {
     private String id;
     private String name;
     private String link;
     private String userId;
     private String groupId;
-    private String groupName;
     private String creationDate;
     private String modificationDate;
     private String deletionDate;
@@ -73,27 +72,5 @@ public class LeaderRequestDTO {
 
     public void setDeletionDate(String deletionDate) {
         this.deletionDate = deletionDate;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    @Override
-    public String toString() {
-        return "LeaderDTO{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", link='" + link + '\'' +
-                ", userId='" + userId + '\'' +
-                ", groupId='" + groupId + '\'' +
-                ", creationDate='" + creationDate + '\'' +
-                ", modificationDate='" + modificationDate + '\'' +
-                ", deletionDate='" + deletionDate + '\'' +
-                '}';
     }
 }

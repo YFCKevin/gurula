@@ -1,8 +1,8 @@
 package com.yfckevin.badmintonfront.controller;
 
 import com.dtflys.forest.http.ForestResponse;
-import com.yfckevin.api.badminton.api.LoginApi;
-import com.yfckevin.api.badminton.dto.LoginDTO;
+import com.yfckevin.api.badminton.api.badminton.LoginApi;
+import com.yfckevin.api.badminton.dto.badminton.LoginDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;

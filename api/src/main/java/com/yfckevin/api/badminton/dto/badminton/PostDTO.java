@@ -1,6 +1,6 @@
-package com.yfckevin.api.badminton.dto;
+package com.yfckevin.api.badminton.dto.badminton;
 
-public class PostRequestDTO {
+public class PostDTO {
     private String id;
     private String userId;
     private String name;
@@ -200,4 +200,3 @@ public class PostRequestDTO {
         this.shortLink = shortLink;
     }
 }
-

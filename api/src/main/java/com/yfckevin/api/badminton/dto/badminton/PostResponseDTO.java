@@ -1,11 +1,13 @@
-package com.yfckevin.api.badminton.dto;
+package com.yfckevin.api.badminton.dto.badminton;
 
-public class PostDTO {
+
+import com.yfckevin.common.enums.AirConditionerType;
+
+public class PostResponseDTO {
     private String id;
     private String userId;
     private String name;
     private String place;
-    private String time;
     private String startTime;
     private String endTime;
     private String level;
@@ -15,21 +17,19 @@ public class PostDTO {
     private String contact;
     private String parkInfo;
     private String type;
-    private String airConditioner;
-    private String link;    //桌機版
-    private String shortLink;   //手機版
+    private AirConditionerType airConditioner;
+    private String dayOfWeek;
     private String creationDate;
     private String modificationDate;
     private String deletionDate;
-    private String dayOfWeek;
-    private String labelCourt;
+    private boolean labelCourt; //是否已加入球館內，預設是無
 
-    public String getLabelCourt() {
-        return labelCourt;
+    public String getDayOfWeek() {
+        return dayOfWeek;
     }
 
-    public void setLabelCourt(String labelCourt) {
-        this.labelCourt = labelCourt;
+    public void setDayOfWeek(String dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
     public String getId() {
@@ -38,14 +38,6 @@ public class PostDTO {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getName() {
@@ -136,11 +128,11 @@ public class PostDTO {
         this.type = type;
     }
 
-    public String getAirConditioner() {
+    public AirConditionerType getAirConditioner() {
         return airConditioner;
     }
 
-    public void setAirConditioner(String airConditioner) {
+    public void setAirConditioner(AirConditionerType airConditioner) {
         this.airConditioner = airConditioner;
     }
 
@@ -152,20 +144,12 @@ public class PostDTO {
         this.creationDate = creationDate;
     }
 
-    public String getLink() {
-        return link;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getModificationDate() {
@@ -184,19 +168,36 @@ public class PostDTO {
         this.deletionDate = deletionDate;
     }
 
-    public String getDayOfWeek() {
-        return dayOfWeek;
+    public boolean isLabelCourt() {
+        return labelCourt;
     }
 
-    public void setDayOfWeek(String dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
+    public void setLabelCourt(boolean labelCourt) {
+        this.labelCourt = labelCourt;
     }
 
-    public String getShortLink() {
-        return shortLink;
-    }
-
-    public void setShortLink(String shortLink) {
-        this.shortLink = shortLink;
+    @Override
+    public String toString() {
+        return "PostResponseDTO{" +
+                "id='" + id + '\'' +
+                ", userId='" + userId + '\'' +
+                ", name='" + name + '\'' +
+                ", place='" + place + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", level='" + level + '\'' +
+                ", fee=" + fee +
+                ", duration=" + duration +
+                ", brand='" + brand + '\'' +
+                ", contact='" + contact + '\'' +
+                ", parkInfo='" + parkInfo + '\'' +
+                ", type='" + type + '\'' +
+                ", airConditioner=" + airConditioner +
+                ", dayOfWeek='" + dayOfWeek + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", modificationDate='" + modificationDate + '\'' +
+                ", deletionDate='" + deletionDate + '\'' +
+                ", labelCourt=" + labelCourt +
+                '}';
     }
 }

@@ -1,18 +1,18 @@
-package com.yfckevin.api.badminton.api;
+package com.yfckevin.api.badminton.api.badminton;
 
 import com.dtflys.forest.annotation.BaseRequest;
 import com.dtflys.forest.annotation.Body;
 import com.dtflys.forest.annotation.Post;
 import com.dtflys.forest.http.ForestResponse;
-import com.yfckevin.api.badminton.dto.PostResponseDTO;
-import com.yfckevin.api.badminton.dto.RequestPostDTO;
+import com.yfckevin.api.badminton.dto.badminton.PostResponseDTO;
+import com.yfckevin.api.badminton.dto.badminton.RequestPostDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-@BaseRequest(baseURL = "${backendDomain}")
+@BaseRequest(baseURL = "${badmintonDomain}")
 public interface OpenaiApi {
     @Post(
             url = "/convertToPosts",

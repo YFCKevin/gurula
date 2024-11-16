@@ -1,10 +1,10 @@
-package com.yfckevin.api.badminton.api;
+package com.yfckevin.api.badminton.api.badminton;
 
 import com.dtflys.forest.annotation.*;
 import com.dtflys.forest.http.ForestResponse;
-import com.yfckevin.api.badminton.dto.CourtResponseDTO;
-import com.yfckevin.api.badminton.dto.NearByRequestDTO;
-import com.yfckevin.api.badminton.dto.SearchDTO;
+import com.yfckevin.api.badminton.dto.badminton.CourtResponseDTO;
+import com.yfckevin.api.badminton.dto.badminton.NearByRequestDTO;
+import com.yfckevin.api.badminton.dto.badminton.SearchDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@BaseRequest(baseURL = "${backendDomain}")
+@BaseRequest(baseURL = "${badmintonDomain}")
 public interface CourtApi {
 
     @Get(url = "/getCourtInfoByPostId/{postId}")

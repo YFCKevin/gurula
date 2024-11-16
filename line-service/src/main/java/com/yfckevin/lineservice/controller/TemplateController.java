@@ -1,7 +1,7 @@
 package com.yfckevin.lineservice.controller;
 
 import com.dtflys.forest.http.ForestResponse;
-import com.yfckevin.api.badminton.dto.SearchDTO;
+import com.yfckevin.api.badminton.dto.badminton.SearchDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import com.yfckevin.lineservice.ConfigProperties;
 import com.yfckevin.lineservice.api.LineApi;
@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 public class TemplateController {

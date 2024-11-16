@@ -1,4 +1,4 @@
-package com.yfckevin.api.badminton.dto;
+package com.yfckevin.api.badminton.dto.badminton;
 
 import java.util.ArrayList;
 import java.util.List;

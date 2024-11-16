@@ -1,10 +1,10 @@
-package com.yfckevin.api.badminton.api;
+package com.yfckevin.api.badminton.api.badminton;
 
 import com.dtflys.forest.annotation.*;
 import com.dtflys.forest.http.ForestResponse;
-import com.yfckevin.api.badminton.dto.PostRequestDTO;
-import com.yfckevin.api.badminton.dto.PostResponseDTO;
-import com.yfckevin.api.badminton.dto.SearchDTO;
+import com.yfckevin.api.badminton.dto.badminton.PostRequestDTO;
+import com.yfckevin.api.badminton.dto.badminton.PostResponseDTO;
+import com.yfckevin.api.badminton.dto.badminton.SearchDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-@BaseRequest(baseURL = "${backendDomain}")
+@BaseRequest(baseURL = "${badmintonDomain}")
 public interface PostApi {
     @Get(url = "/getTodayNewPosts/{startOfToday}/{endOfToday}")
     ForestResponse<ResultStatus<List<PostResponseDTO>>> todayNewPosts(@Var("startOfToday") String startOfToday, @Var("endOfToday") String endOfToday);

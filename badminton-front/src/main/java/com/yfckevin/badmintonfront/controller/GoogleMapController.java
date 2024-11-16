@@ -2,12 +2,12 @@ package com.yfckevin.badmintonfront.controller;
 
 import com.dtflys.forest.http.ForestResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yfckevin.api.badminton.api.CourtApi;
-import com.yfckevin.api.badminton.dto.NearByRequestDTO;
+import com.yfckevin.api.badminton.api.badminton.CourtApi;
+import com.yfckevin.api.badminton.dto.badminton.NearByRequestDTO;
 import com.yfckevin.badmintonfront.dto.PostDTO;
-import com.yfckevin.api.badminton.dto.CourtResponseDTO;
-import com.yfckevin.api.badminton.dto.LeaderResponseDTO;
-import com.yfckevin.api.badminton.dto.PostResponseDTO;
+import com.yfckevin.api.badminton.dto.badminton.CourtResponseDTO;
+import com.yfckevin.api.badminton.dto.badminton.LeaderResponseDTO;
+import com.yfckevin.api.badminton.dto.badminton.PostResponseDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

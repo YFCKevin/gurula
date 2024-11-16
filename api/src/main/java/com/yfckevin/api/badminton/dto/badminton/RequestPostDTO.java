@@ -1,4 +1,4 @@
-package com.yfckevin.api.badminton.dto;
+package com.yfckevin.api.badminton.dto.badminton;
 
 public class RequestPostDTO {
     private String name;    //團主名
