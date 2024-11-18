@@ -17,6 +17,9 @@
 		<module>badminton-front</module>
         <module>line-service</module>
 		<module>line-front</module>
+		<module>cms</module>
+		<module>digital-content-service</module>
+		<module>inkCloud</module>
 	</modules>
 
 	<parent>
