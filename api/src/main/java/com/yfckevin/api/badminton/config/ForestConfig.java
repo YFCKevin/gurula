@@ -4,8 +4,8 @@ import com.dtflys.forest.config.ForestConfiguration;
 import com.dtflys.forest.http.ForestRequest;
 import com.dtflys.forest.interceptor.Interceptor;
 import com.yfckevin.api.badminton.ConfigProperties;
+import com.yfckevin.api.badminton.loadBalancer.LoadBalancerFactory;
 import com.yfckevin.common.utils.MemberContext;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,28 +16,26 @@ import java.util.List;
 @Configuration
 public class ForestConfig {
     private final ConfigProperties configProperties;
-    private final LoadBalancerClient loadBalancerClient;
+    private final LoadBalancerFactory loadBalancerFactory;
 
-    public ForestConfig(ConfigProperties configProperties, LoadBalancerClient loadBalancerClient) {
+    public ForestConfig(ConfigProperties configProperties, LoadBalancerFactory loadBalancerFactory) {
         this.configProperties = configProperties;
-        this.loadBalancerClient = loadBalancerClient;
+        this.loadBalancerFactory = loadBalancerFactory;
     }
 
     @Bean(name = "customForestConfiguration")
     public ForestConfiguration forestConfiguration() {
         ForestConfiguration configuration = ForestConfiguration.configuration();
-        ServiceInstance instance = loadBalancerClient.choose("badmintonservice");
-        if (instance == null) {
-            System.out.println(123);
-            configuration.setVariableValue("backendDomain", configProperties.getBackendDomain());
-        } else {
-            System.out.println(456);
-            System.out.println(instance.getUri().toString());
-            configuration.setVariableValue("backendDomain", instance.getUri().toString() + "/badminton/");
-        }
+
+        loadBalancerFactory.getStrategy("badmintonservice").setForestBasedDomain(configuration, configProperties);
+        loadBalancerFactory.getStrategy("cms").setForestBasedDomain(configuration, configProperties);
 
         List<Class<? extends Interceptor>> interceptors = Collections.singletonList(MemberInfoInterceptor.class);
         configuration.setInterceptors(interceptors);
+
+        // 設定超時
+        configuration.setConnectTimeout(5000); // 連接超時 (毫秒)
+        configuration.setReadTimeout(10000);  // 讀取超時 (毫秒)
 
         return configuration;
     }

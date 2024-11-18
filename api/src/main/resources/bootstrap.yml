@@ -23,4 +23,5 @@ forest:
     type: okhttp
 
 config:
-  backendDomain: http://localhost:18099/badminton/
+  badmintonDomain: http://localhost:18099/badminton/
+  cmsDomain: http://localhost:19011/cms/
