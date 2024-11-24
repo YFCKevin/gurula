@@ -20,7 +20,7 @@ import java.util.TimeZone;
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableConfigurationProperties(com.yfckevin.badminton.ConfigProperties.class)
-@ComponentScan(basePackages = {"com.yfckevin.api.badminton.api", "com.yfckevin.badminton"})
+@ComponentScan(basePackages = {"com.yfckevin.api", "com.yfckevin.badminton"})
 public class BadmintonApplication {
 
 	public static void main(String[] args) {

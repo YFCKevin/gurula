@@ -18,6 +18,17 @@ public class Content {
     private String modifier;
     private String deletionDate;
 
+    private String text;    //影片旁白narration
+    private long size;      //語音和影片的檔案大小
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
     public String getId() {
         return id;
     }
@@ -96,5 +107,31 @@ public class Content {
 
     public void setDeletionDate(String deletionDate) {
         this.deletionDate = deletionDate;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return "Content{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", path='" + path + '\'' +
+                ", memberId='" + memberId + '\'' +
+                ", mediaType=" + mediaType +
+                ", creationDate='" + creationDate + '\'' +
+                ", creator='" + creator + '\'' +
+                ", modificationDate='" + modificationDate + '\'' +
+                ", modifier='" + modifier + '\'' +
+                ", deletionDate='" + deletionDate + '\'' +
+                ", text='" + text + '\'' +
+                ", size=" + size +
+                '}';
     }
 }

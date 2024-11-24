@@ -12,13 +12,6 @@ spring:
       discovery:
         server-addr: 104.155.209.147:8848
         namespace: 84a8d1af-4af2-4a1c-9df4-b0b7c2ef3998
-  resources:
-    static-locations: classpath:/static/
-  thymeleaf:
-    mode: HTML
-    encoding: UTF-8
-    cache: true
-    prefix: classpath:/templates/
   security:
     oauth2:
       client:

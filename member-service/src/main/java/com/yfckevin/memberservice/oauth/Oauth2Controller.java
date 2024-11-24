@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
@@ -38,7 +40,7 @@ public class Oauth2Controller {
 
 
     @GetMapping("/callback")
-    public String handleOAuth2Callback(@RequestParam("code") String code, HttpServletResponse response) {
+    public String handleOAuth2Callback(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -102,6 +104,19 @@ public class Oauth2Controller {
 
         response.setHeader("Set-Cookie", cookie.toString());
 
-        return "redirect:" + configProperties.getGlobalDomain() + "index.html";
+        String serviceName = (String) request.getSession().getAttribute("service");
+        System.out.println("serviceName = " + serviceName);
+        switch (serviceName) {
+            case "badminton":
+                response.sendRedirect(configProperties.getBadmintonDomain() + "index");
+                break;
+            case "inkCloud":
+                response.sendRedirect(configProperties.getInkCloudDomain() + "index.html");
+                break;
+            case "bingBao":
+                response.sendRedirect(configProperties.getBingBaoDomain() + "dashboard.html");
+                break;
+        }
+        return "";
     }
 }

@@ -23,6 +23,15 @@ public class Book {
     private String modificationDate;
     private String modifier;
     private String deletionDate;
+    private String error;
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
 
     public String getId() {
         return id;

@@ -7,18 +7,20 @@ import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.protobuf.ByteString;
 import com.yfckevin.cms.ConfigProperties;
+import com.yfckevin.cms.config.RabbitMQConfig;
+import com.yfckevin.cms.entity.Content;
 import com.yfckevin.cms.entity.ErrorFile;
+import com.yfckevin.cms.enums.MediaType;
 import com.yfckevin.cms.repository.ContentRepository;
 import com.yfckevin.cms.repository.ErrorFileRepository;
-import com.yfckevin.common.dto.inkCloud.ImageRequestDTO;
-import com.yfckevin.common.dto.inkCloud.SearchDTO;
+import com.yfckevin.common.dto.inkCloud.*;
 import com.yfckevin.cms.entity.Book;
 import com.yfckevin.cms.repository.BookRepository;
-import com.yfckevin.common.dto.inkCloud.BookDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import com.yfckevin.common.utils.MemberContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -30,6 +32,7 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -43,8 +46,9 @@ public class BookServiceImpl implements BookService {
     private final SimpleDateFormat sdf;
     private final ConfigProperties configProperties;
     private final ObjectMapper objectMapper;
+    private final RabbitTemplate rabbitTemplate;
 
-    public BookServiceImpl(BookRepository bookRepository, ErrorFileRepository errorFileRepository, ContentRepository contentRepository, LLMService llmService, OCRService ocrService, MongoTemplate mongoTemplate, @Qualifier("sdf") SimpleDateFormat sdf, ConfigProperties configProperties, ObjectMapper objectMapper) {
+    public BookServiceImpl(BookRepository bookRepository, ErrorFileRepository errorFileRepository, ContentRepository contentRepository, LLMService llmService, OCRService ocrService, MongoTemplate mongoTemplate, @Qualifier("sdf") SimpleDateFormat sdf, ConfigProperties configProperties, ObjectMapper objectMapper, RabbitTemplate rabbitTemplate) {
         this.bookRepository = bookRepository;
         this.errorFileRepository = errorFileRepository;
         this.contentRepository = contentRepository;
@@ -54,10 +58,12 @@ public class BookServiceImpl implements BookService {
         this.sdf = sdf;
         this.configProperties = configProperties;
         this.objectMapper = objectMapper;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
     public List<Book> findBook(SearchDTO searchDTO) {
+        System.out.println("searchDTO = " + searchDTO);
         final String keyword = searchDTO.getKeyword().trim();
         List<Criteria> orCriterias = new ArrayList<>();
         List<Criteria> andCriterias = new ArrayList<>();
@@ -110,13 +116,13 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public int editBook(BookDTO bookDTO) {
+    public int editBook(String memberId, BookDTO bookDTO) {
         return bookRepository.findById(bookDTO.getId())
                 .map(book -> {
                     book.setTitle(bookDTO.getTitle());
                     book.setAuthor(bookDTO.getAuthor());
                     book.setPublisher(bookDTO.getPublisher());
-                    book.setModifier(MemberContext.getMember());
+                    book.setModifier(memberId);
                     book.setModificationDate(sdf.format(new Date()));
                     bookRepository.save(book);
                     return 1;
@@ -191,6 +197,105 @@ public class BookServiceImpl implements BookService {
         dataMap.put("errorCount", errorCount.get());
         System.out.println("dataMap = " + dataMap);
         return dataMap;
+    }
+
+    @Override
+    public ResultStatus previewBookStatus(String bookId) {
+        ResultStatus resultStatus = new ResultStatus();
+        final Optional<Book> bookOpt = bookRepository.findById(bookId);
+        if (bookOpt.isEmpty()) {
+            resultStatus.setCode("C001");
+            resultStatus.setMessage("查無書籍");
+        } else {
+            final Book book = bookOpt.get();
+            if (StringUtils.isBlank(book.getSourceVideoId())) {
+                resultStatus.setCode("C005");
+                resultStatus.setMessage("尚未生成試閱影片");
+            } else {
+                final Optional<Content> videoOpt = contentRepository.findById(book.getSourceVideoId());
+                if (videoOpt.isEmpty()) {
+                    resultStatus.setCode("C006");
+                    resultStatus.setMessage("查無影片");
+                } else {
+                    final Content video = videoOpt.get();
+                    System.out.println("video = " + video);
+                    if (StringUtils.isBlank(video.getPath()) && StringUtils.isNotBlank(book.getError())) {
+                        //製作影片過程有錯誤
+                        resultStatus.setCode("C003");
+                        resultStatus.setMessage("製作影片過程有錯誤");
+                    } else if (StringUtils.isBlank(video.getPath()) && StringUtils.isBlank(book.getError())) {
+                        //影片製作中
+                        resultStatus.setCode("C004");
+                        resultStatus.setMessage("試閱影片製作中");
+                    } else if (StringUtils.isNotBlank(video.getPath()) && StringUtils.isBlank(book.getError())) {
+                        resultStatus.setCode("C000");
+                        resultStatus.setMessage("成功");
+                        resultStatus.setData(configProperties.getVideoShowPath() + video.getTitle());
+                    }
+                }
+            }
+        }
+        return resultStatus;
+    }
+
+    @Override
+    public ResultStatus constructVideo(String memberId, VideoRequestDTO dto) {
+        ResultStatus resultStatus = new ResultStatus();
+        final Optional<Book> opt = bookRepository.findById(dto.getBookId());
+        if (opt.isEmpty()) {
+            resultStatus.setCode("C001");
+            resultStatus.setMessage("查無書籍");
+        } else {
+            final Book book = opt.get();
+            String text = "書名:" + book.getTitle() + "," + "作者:" + book.getAuthor();
+            NarrationMsgDTO narrationMsgDTO = new NarrationMsgDTO();
+            narrationMsgDTO.setText(text);
+            narrationMsgDTO.setBookId(dto.getBookId());
+            narrationMsgDTO.setVideoId(dto.getVideoId());
+            narrationMsgDTO.setBookName(book.getTitle());
+            narrationMsgDTO.setMemberId(memberId);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.WORKFLOW_EXCHANGE, "workflow.llm", narrationMsgDTO);
+            resultStatus.setCode("C000");
+            resultStatus.setMessage("成功");
+        }
+        return resultStatus;
+    }
+
+    @Override
+    public ResultStatus getVideoId(String bookId, String memberId) {
+        ResultStatus resultStatus = new ResultStatus();
+        final Optional<Book> opt = bookRepository.findById(bookId);
+        if (opt.isEmpty()) {
+            resultStatus.setCode("C001");
+            resultStatus.setMessage("查無書籍");
+        } else {
+            Content video = new Content();
+            video.setMemberId(memberId);
+            video.setMediaType(MediaType.Video);
+            Content savedVideo = contentRepository.save(video);
+
+            final Book book = opt.get();
+            book.setSourceVideoId(savedVideo.getId());
+            bookRepository.save(book);
+
+            resultStatus.setCode("C000");
+            resultStatus.setMessage("成功");
+            resultStatus.setData(savedVideo.getId());
+        }
+        return resultStatus;
+    }
+
+    @Override
+    public ResultStatus getPreviewStatus(String memberId) {
+        ResultStatus resultStatus = new ResultStatus();
+        List<Content> contentList = contentRepository.findByMemberIdAndDeletionDateIsNullAndPathIsNullAndMediaType(memberId, MediaType.Video);
+        final List<String> videoIds = contentList.stream().map(Content::getId).collect(Collectors.toList());
+        List<Book> bookList = bookRepository.findBySourceVideoIdInAndErrorIsNull(videoIds);
+        final List<String> bookIds = bookList.stream().map(Book::getId).collect(Collectors.toList());
+        resultStatus.setCode("C000");
+        resultStatus.setMessage("成功");
+        resultStatus.setData(bookIds);
+        return resultStatus;
     }
 
     private void handleErrorFile(String code, String message, String fileName, String memberId) {

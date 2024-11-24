@@ -70,8 +70,8 @@
             <li x-show="memberName != null" style="display: flex; justify-content: center; align-items: center;">
               <span class="fw-bold" style="color: yellow;" x-text="memberName"></span>
             </li>
-            <li x-show="memberName == null"><a class="nav-link fw-bold" href="login.html">登入</a></li>
-            <li x-show="memberName != null"><a class="nav-link fw-bold" x-on:click="logout()">登出</a></li>
+            <li x-show="memberName == null || memberName == ''"><a class="nav-link fw-bold" style="cursor: pointer;" href="login.html">登入</a></li>
+            <li x-show="memberName != null && memberName != ''"><a class="nav-link fw-bold" style="cursor: pointer;" x-on:click="logout()">登出</a></li>
           </ul>
         </div>
       </div>
@@ -300,7 +300,6 @@
     <script src="js/custom.js"></script>
     <script src="js/sweetalert.min.js"></script>
     <script src="js/jquery.min.js"></script>
-    <script src="js/alpine.2.8.2.min.js"></script>
     <script>
       function loadData() {
         return {
@@ -310,21 +309,43 @@
           bookData: [],
           bookIdList: [],
           memberName: "",
+          memberId: "",
 
-          init() {
+          async init() {
             let _this = this;
-            $.ajax({
-              url: "bookcase",
-              type: "get",
-              dataType: "json",
-              contentType: "application/json; charset=utf-8",
-              success: function (response) {
-                if (response.code == "C000"){
-                  _this.pageNumber = 0;
-                  _this.bookData = response.data;
-                }
-              },
-            });
+
+            try {
+              let memberInfo = await $.ajax({
+                url: "memberInfo",
+                type: "get",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+              });
+
+              console.log(memberInfo)
+
+              _this.memberName = memberInfo.memberName;
+              _this.memberId = memberInfo.memberId;
+
+              console.log(123)
+
+              let bookcaseResponse = await $.ajax({
+                url: "bookcase/" + _this.memberId,
+                type: "get",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+              });
+
+              console.log(bookcaseResponse)
+
+              if (bookcaseResponse.code == "C000") {
+                _this.pageNumber = 0;
+                _this.bookData = bookcaseResponse.data;
+              }
+            } catch (error) {
+              console.error("Error:", error);
+            }
+
             $.ajax({
               url: "getPreviewStatus",
               type: "get",
@@ -334,15 +355,6 @@
                 if (response.code == "C000"){
                   _this.bookIdList = response.data;
                 }
-              },
-            });
-            $.ajax({
-              url: "memberInfo",
-              type: "get",
-              dataType: "json",
-              contentType: "application/json; charset=utf-8",
-              success: function (response) {
-                _this.memberName = response.name;
               },
             });
           },
@@ -747,17 +759,25 @@
             return true;
           },
           logout (){
+            let _this = this;
             $.ajax({
               url: "logout",
               type: "get",
               dataType: "json",
               success: function (response) {
-                location.reload();
+                if (response.code == 'C000'){
+                  _this.deleteCookie("JWT_TOKEN");
+                  location.reload();
+                }
               },
             });
           },
+          deleteCookie(cookieName) {
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+          }
         };
       }
     </script>
+    <script src="js/alpine.2.8.2.min.js"></script>
   </body>
 </html>

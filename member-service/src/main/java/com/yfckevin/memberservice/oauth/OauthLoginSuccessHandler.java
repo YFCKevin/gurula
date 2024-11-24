@@ -53,7 +53,19 @@ public class OauthLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.setHeader("Set-Cookie", cookie.toString());
 
-        response.sendRedirect(configProperties.getGlobalDomain() + "index.html");
+        String serviceName = (String) request.getSession().getAttribute("service");
+        System.out.println("serviceName = " + serviceName);
+        switch (serviceName) {
+            case "badminton":
+                response.sendRedirect(configProperties.getBadmintonDomain() + "index");
+                break;
+            case "inkCloud":
+                response.sendRedirect(configProperties.getInkCloudDomain() + "index.html");
+                break;
+            case "bingBao":
+                response.sendRedirect(configProperties.getBingBaoDomain() + "dashboard.html");
+                break;
+        }
     }
 
 }

@@ -2,9 +2,9 @@ package com.yfckevin.lineservice.utils;
 
 import com.dtflys.forest.http.ForestResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.yfckevin.api.badminton.api.badminton.LeaderApi;
-import com.yfckevin.api.badminton.api.badminton.PostApi;
-import com.yfckevin.api.badminton.dto.badminton.*;
+import com.yfckevin.api.api.badminton.LeaderApi;
+import com.yfckevin.api.api.badminton.PostApi;
+import com.yfckevin.api.dto.badminton.*;
 import com.yfckevin.common.exception.ResultStatus;
 import com.yfckevin.lineservice.ConfigProperties;
 import com.yfckevin.lineservice.dto.TemplateDetailResponseDTO;

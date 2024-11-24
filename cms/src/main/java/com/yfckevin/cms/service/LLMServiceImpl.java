@@ -3,27 +3,50 @@ package com.yfckevin.cms.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yfckevin.cms.ConfigProperties;
+import com.yfckevin.cms.config.RabbitMQConfig;
 import com.yfckevin.cms.dto.ChatCompletionResponse;
+import com.yfckevin.cms.entity.Book;
+import com.yfckevin.cms.entity.Content;
+import com.yfckevin.cms.repository.BookRepository;
+import com.yfckevin.cms.repository.ContentRepository;
+import com.yfckevin.common.dto.inkCloud.NarrationMsgDTO;
+import com.yfckevin.common.dto.inkCloud.WorkFlowDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
 public class LLMServiceImpl implements LLMService{
+    private final BookRepository bookRepository;
+    private final ContentRepository contentRepository;
     private final ConfigProperties configProperties;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final SimpleDateFormat sdf;
+    private final RabbitTemplate rabbitTemplate;
 
-    public LLMServiceImpl(ConfigProperties configProperties, RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public LLMServiceImpl(ConfigProperties configProperties, RestTemplate restTemplate, ObjectMapper objectMapper,
+                          ContentRepository contentRepository, @Qualifier("sdf") SimpleDateFormat sdf, RabbitTemplate rabbitTemplate,
+                          BookRepository bookRepository) {
         this.configProperties = configProperties;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+        this.contentRepository = contentRepository;
+        this.sdf = sdf;
+        this.rabbitTemplate = rabbitTemplate;
+        this.bookRepository = bookRepository;
     }
 
     @Override
@@ -58,6 +81,71 @@ public class LLMServiceImpl implements LLMService{
         return resultStatus;
     }
 
+    @Override
+    @RabbitListener(queues = RabbitMQConfig.LLM_QUEUE)
+    public void constructNarration(NarrationMsgDTO dto) {
+        final Book book = bookRepository.findById(dto.getBookId()).get();
+
+        WorkFlowDTO workFlowDTO = new WorkFlowDTO();
+
+        String url = "https://api.openai.com/v1/chat/completions";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(configProperties.getOpenAIApiKey());
+
+        String data = createPayload(dto.getText() + "\n" + prompt_video);
+
+        HttpEntity<String> entity = new HttpEntity<>(data, headers);
+
+        ResponseEntity<ChatCompletionResponse> response = restTemplate.exchange(url, HttpMethod.POST, entity, ChatCompletionResponse.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            log.info("OpenAI回傳的status code: {}", response);
+            ChatCompletionResponse responseBody = response.getBody();
+            String content = extractTextContent(responseBody);
+            System.out.println("GPT回傳資料 ======> " + content);
+
+            Content narration = new Content();
+            narration.setText(content);
+            narration.setCreationDate(sdf.format(new Date()));
+            narration.setMemberId(dto.getMemberId());
+            narration.setMediaType(com.yfckevin.cms.enums.MediaType.Text);
+            Content savedNarration = contentRepository.save(narration);
+
+            if (savedNarration != null) {
+
+                book.setSourceNarrationId(savedNarration.getId());
+                bookRepository.save(book);
+
+                workFlowDTO.setCode("C000");
+                workFlowDTO.setMsg("成功");
+                workFlowDTO.setBookId(dto.getBookId());
+                workFlowDTO.setBookName(dto.getBookName());
+                workFlowDTO.setNarrationId(savedNarration.getId());
+                workFlowDTO.setNarration(savedNarration.getText());
+                workFlowDTO.setVideoId(dto.getVideoId());
+                workFlowDTO.setMemberId(savedNarration.getMemberId());
+                log.info("旁白儲存成功，繼續執行製作mp3");
+                rabbitTemplate.convertAndSend(RabbitMQConfig.WORKFLOW_EXCHANGE, "workflow.audio", workFlowDTO);
+            } else {
+                workFlowDTO.setCode("C999");
+                workFlowDTO.setMsg("旁白儲存失敗");
+                book.setError("旁白儲存失敗");
+                bookRepository.save(book);
+                log.error("旁白儲存失敗，導向錯誤");
+                rabbitTemplate.convertAndSend(RabbitMQConfig.WORKFLOW_EXCHANGE, "workflow.error", workFlowDTO);
+            }
+        } else {
+            workFlowDTO.setCode("C999");
+            workFlowDTO.setMsg("openAI錯誤發生");
+            book.setError("[旁白] openAI錯誤發生");
+            bookRepository.save(book);
+            log.error("[旁白] openAI錯誤發生，狀態碼：{}，導向錯誤", response.getStatusCode());
+            rabbitTemplate.convertAndSend(RabbitMQConfig.WORKFLOW_EXCHANGE, "workflow.error", workFlowDTO);
+        }
+    }
+
 
     private String createPayload(String prompt) {
         Map<String, Object> payload = new HashMap<>();
@@ -89,6 +177,16 @@ public class LLMServiceImpl implements LLMService{
                 }
 
                 return content;
+            }
+        }
+        return null;
+    }
+
+    private String extractTextContent(ChatCompletionResponse responseBody) {
+        if (responseBody != null && !responseBody.getChoices().isEmpty()) {
+            ChatCompletionResponse.Choice choice = responseBody.getChoices().get(0);
+            if (choice != null && choice.getMessage() != null) {
+                return choice.getMessage().getContent().trim();
             }
         }
         return null;
@@ -131,4 +229,14 @@ public class LLMServiceImpl implements LLMService{
                     "]\n\n" +
                     "7. 確保輸出只有 JSON 格式，無需多餘的描述或文本。\n" +
                     "8. 如果某本書的 title、author 或 publisher 欄位缺失，該欄位設定為空字串。";
+
+
+    public final String prompt_video =
+            "1.書名與作者如上，我要你給我200字的摘要文章，內容包含：\n" +
+                    "書籍主題或核心思想\n" +
+                    "主要情節\n" +
+                    "重點內容\n" +
+                    "從中學到什麼或感受到什麼\n" +
+                    "寫作風格或特色\n" +
+                    "為何值得一讀";
 }

@@ -21,13 +21,15 @@ jwt:
   tokenTTL: 30m
 auth:
   excludePaths:
-    - /gurula/index.html
-    - /gurula/login.html
-    - /gurula/oauth2/**
-    - /gurula/login/**
-    - /gurula/images/**
-    - /gurula/js/**
-    - /gurula/callback
+    - /member/oauth2/**
+    - /member/login/**
+    - /member/**
+    - /member/callback
     - /badmintonfront/**
     - /linefront/**
-    - /line/**
+    - /inkCloud/index.html
+    - /inkCloud/login.html
+    - /inkCloud/bookcase
+    - /inkCloud/css/**
+    - /inkCloud/js/**
+    - /inkCloud/images/**

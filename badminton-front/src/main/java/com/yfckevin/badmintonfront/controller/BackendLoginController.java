@@ -1,8 +1,8 @@
 package com.yfckevin.badmintonfront.controller;
 
 import com.dtflys.forest.http.ForestResponse;
-import com.yfckevin.api.badminton.api.badminton.LoginApi;
-import com.yfckevin.api.badminton.dto.badminton.LoginDTO;
+import com.yfckevin.api.api.badminton.LoginApi;
+import com.yfckevin.api.dto.badminton.LoginDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
