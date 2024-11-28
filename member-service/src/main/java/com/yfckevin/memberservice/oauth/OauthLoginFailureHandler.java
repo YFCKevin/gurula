@@ -26,7 +26,20 @@ public class OauthLoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
-        response.sendRedirect(configProperties.getGlobalDomain() + "index.html");
+
+        String serviceName = (String) request.getSession().getAttribute("service");
+        System.out.println("serviceName = " + serviceName);
+        switch (serviceName) {
+            case "badminton":
+                response.sendRedirect(configProperties.getBadmintonDomain() + "index");
+                break;
+            case "inkCloud":
+                response.sendRedirect(configProperties.getInkCloudDomain() + "login.html");
+                break;
+            case "bingBao":
+                response.sendRedirect(configProperties.getBingBaoDomain() + "login.html");
+                break;
+        }
     }
 
 }

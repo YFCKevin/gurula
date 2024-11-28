@@ -35,11 +35,9 @@ public class LoginController {
 
         switch (type) {
             case "google":
-                System.out.println(123);
                 response.sendRedirect(configProperties.getGlobalDomain() + "oauth2/authorization/google");
                 break;
             case "line":
-                System.out.println(456);
                 response.sendRedirect(configProperties.getGlobalDomain() + "oauth2/authorization/line");
                 break;
         }
