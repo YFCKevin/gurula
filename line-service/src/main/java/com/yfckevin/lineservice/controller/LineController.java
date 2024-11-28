@@ -2,9 +2,10 @@ package com.yfckevin.lineservice.controller;
 
 import com.dtflys.forest.http.ForestResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.yfckevin.common.dto.line.LineUserProfileResponseDTO;
+import com.yfckevin.common.dto.line.LineWebhookRequestDTO;
 import com.yfckevin.lineservice.ConfigProperties;
 import com.yfckevin.lineservice.api.LineApi;
-import com.yfckevin.lineservice.dto.*;
 import com.yfckevin.lineservice.entity.Follower;
 import com.yfckevin.common.exception.ResultStatus;
 import com.yfckevin.lineservice.service.FollowerService;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

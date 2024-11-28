@@ -1,4 +1,4 @@
-package com.yfckevin.lineservice.enums;
+package com.yfckevin.common.enums;
 
 public enum StickerResourceType {
     STATIC("STATIC", "靜態圖片貼圖"),

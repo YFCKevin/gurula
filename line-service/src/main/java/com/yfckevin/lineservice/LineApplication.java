@@ -18,7 +18,7 @@ import java.util.TimeZone;
 @EnableDiscoveryClient
 @EnableScheduling
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.yfckevin.api.badminton", "com.yfckevin.lineservice"})
+@ComponentScan(basePackages = {"com.yfckevin.api", "com.yfckevin.lineservice"})
 @EnableConfigurationProperties(com.yfckevin.lineservice.ConfigProperties.class)
 public class LineApplication {
 

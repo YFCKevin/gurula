@@ -1,4 +1,4 @@
-package com.yfckevin.linefrontservice.dto;
+package com.yfckevin.common.dto.line;
 
 public class SearchDTO {
     private String keyword;

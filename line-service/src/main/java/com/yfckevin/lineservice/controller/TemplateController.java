@@ -5,7 +5,7 @@ import com.yfckevin.api.dto.badminton.SearchDTO;
 import com.yfckevin.common.exception.ResultStatus;
 import com.yfckevin.lineservice.ConfigProperties;
 import com.yfckevin.lineservice.api.LineApi;
-import com.yfckevin.lineservice.dto.*;
+import com.yfckevin.common.dto.line.*;
 import com.yfckevin.lineservice.entity.Follower;
 import com.yfckevin.lineservice.entity.TemplateDetail;
 import com.yfckevin.lineservice.entity.TemplateSubject;

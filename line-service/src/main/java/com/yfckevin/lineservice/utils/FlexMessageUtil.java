@@ -7,7 +7,7 @@ import com.yfckevin.api.api.badminton.PostApi;
 import com.yfckevin.api.dto.badminton.*;
 import com.yfckevin.common.exception.ResultStatus;
 import com.yfckevin.lineservice.ConfigProperties;
-import com.yfckevin.lineservice.dto.TemplateDetailResponseDTO;
+import com.yfckevin.common.dto.line.TemplateDetailResponseDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

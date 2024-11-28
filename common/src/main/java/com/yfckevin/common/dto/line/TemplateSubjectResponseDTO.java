@@ -1,6 +1,6 @@
-package com.yfckevin.linefrontservice.dto;
+package com.yfckevin.common.dto.line;
 
-import com.yfckevin.linefrontservice.enums.TemplateType;
+import com.yfckevin.common.enums.TemplateType;
 
 import java.util.ArrayList;
 import java.util.List;

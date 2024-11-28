@@ -1,4 +1,4 @@
-package com.yfckevin.linefrontservice.dto;
+package com.yfckevin.common.dto.line;
 
 import java.util.List;
 

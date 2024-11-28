@@ -29,6 +29,7 @@ public class ForestConfig {
         loadBalancerFactory.getStrategy("badmintonservice").setForestBasedDomain(configuration, configProperties);
         loadBalancerFactory.getStrategy("cms").setForestBasedDomain(configuration, configProperties);
         loadBalancerFactory.getStrategy("memberservice").setForestBasedDomain(configuration, configProperties);
+        loadBalancerFactory.getStrategy("lineservice").setForestBasedDomain(configuration, configProperties);
 
         List<Class<? extends Interceptor>> interceptors = Collections.singletonList(MemberInfoInterceptor.class);
         configuration.setInterceptors(interceptors);

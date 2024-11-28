@@ -1,9 +1,9 @@
-package com.yfckevin.linefrontservice.api;
+package com.yfckevin.api.api.line;
 
 import com.dtflys.forest.annotation.*;
 import com.dtflys.forest.http.ForestResponse;
+import com.yfckevin.common.dto.line.*;
 import com.yfckevin.common.exception.ResultStatus;
-import com.yfckevin.linefrontservice.dto.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@BaseRequest(baseURL = "${backendDomain}")
+@BaseRequest(baseURL = "${lineServiceDomain}")
 public interface TemplateApi {
     @Get(url = "/getAllTemplate")
     ForestResponse<ResultStatus<List<TemplateSubjectResponseDTO>>> getAllTemplate();

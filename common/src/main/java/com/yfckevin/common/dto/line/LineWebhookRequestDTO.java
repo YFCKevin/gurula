@@ -1,9 +1,9 @@
-package com.yfckevin.lineservice.dto;
+package com.yfckevin.common.dto.line;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.yfckevin.lineservice.enums.EventType;
-import com.yfckevin.lineservice.enums.MessageType;
-import com.yfckevin.lineservice.enums.StickerResourceType;
+import com.yfckevin.common.enums.EventType;
+import com.yfckevin.common.enums.MessageType;
+import com.yfckevin.common.enums.StickerResourceType;
 
 import java.util.HashMap;
 import java.util.List;

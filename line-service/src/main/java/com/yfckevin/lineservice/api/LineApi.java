@@ -2,10 +2,9 @@ package com.yfckevin.lineservice.api;
 
 import com.dtflys.forest.annotation.*;
 import com.dtflys.forest.http.ForestResponse;
-import com.yfckevin.lineservice.dto.LineUserProfileResponseDTO;
+import com.yfckevin.common.dto.line.LineUserProfileResponseDTO;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
 @Component

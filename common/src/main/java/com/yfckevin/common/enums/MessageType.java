@@ -1,4 +1,4 @@
-package com.yfckevin.lineservice.enums;
+package com.yfckevin.common.enums;
 
 public enum MessageType {
     text(1, "文字"),

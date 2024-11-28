@@ -1,4 +1,4 @@
-package com.yfckevin.lineservice.dto;
+package com.yfckevin.common.dto.line;
 
 import org.springframework.web.multipart.MultipartFile;
 

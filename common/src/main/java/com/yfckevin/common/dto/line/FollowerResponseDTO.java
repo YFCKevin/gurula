@@ -1,4 +1,4 @@
-package com.yfckevin.lineservice.dto;
+package com.yfckevin.common.dto.line;
 
 public class FollowerResponseDTO {
     private String id;

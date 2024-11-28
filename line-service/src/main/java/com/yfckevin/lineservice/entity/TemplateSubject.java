@@ -1,6 +1,6 @@
 package com.yfckevin.lineservice.entity;
 
-import com.yfckevin.lineservice.enums.TemplateType;
+import com.yfckevin.common.enums.TemplateType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

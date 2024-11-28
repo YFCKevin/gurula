@@ -1,4 +1,4 @@
-package com.yfckevin.lineservice.enums;
+package com.yfckevin.common.enums;
 
 public enum TemplateType {
     textImage(1, "圖文訊息"), carousel(2, "輪詢訊息");

@@ -14,6 +14,7 @@ public class LoadBalancerFactory {
         strategies.put("badmintonservice", new BadmintonServiceStrategy(loadBalancerClient));
         strategies.put("cms", new CmsServiceStrategy(loadBalancerClient));
         strategies.put("memberservice", new MemberServiceStrategy(loadBalancerClient));
+        strategies.put("lineservice", new LineServiceStrategy(loadBalancerClient));
     }
 
     public LoadBalancerStrategy getStrategy(String serviceDomain) {

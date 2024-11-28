@@ -1,7 +1,5 @@
 package com.yfckevin.common.dto.inkCloud;
 
-import com.yfckevin.common.enums.VisionType;
-
 public class SearchDTO {
     private String keyword;
     private String startDate;

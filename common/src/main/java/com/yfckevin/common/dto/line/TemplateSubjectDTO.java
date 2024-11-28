@@ -1,19 +1,25 @@
-package com.yfckevin.lineservice.dto;
-
-import com.yfckevin.lineservice.enums.TemplateType;
+package com.yfckevin.common.dto.line;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TemplateSubjectResponseDTO {
+public class TemplateSubjectDTO {
     private String id;
     private String title;
-    private String altText;    //短描述(必填)
+    private String altText;    //短描述
     private List<String> userIds = new ArrayList<>();   //傳送對象
     private String sendDate;    //發送日期時間
     private List<String> detailIds = new ArrayList<>();
     private String creationDate;
-    private TemplateType templateType;
+    private String templateType;
+
+    public String getTemplateType() {
+        return templateType;
+    }
+
+    public void setTemplateType(String templateType) {
+        this.templateType = templateType;
+    }
 
     public String getId() {
         return id;
@@ -29,14 +35,6 @@ public class TemplateSubjectResponseDTO {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getAltText() {
-        return altText;
-    }
-
-    public void setAltText(String altText) {
-        this.altText = altText;
     }
 
     public List<String> getUserIds() {
@@ -71,11 +69,11 @@ public class TemplateSubjectResponseDTO {
         this.creationDate = creationDate;
     }
 
-    public TemplateType getTemplateType() {
-        return templateType;
+    public String getAltText() {
+        return altText;
     }
 
-    public void setTemplateType(TemplateType templateType) {
-        this.templateType = templateType;
+    public void setAltText(String altText) {
+        this.altText = altText;
     }
 }
